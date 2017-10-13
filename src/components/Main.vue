@@ -15,7 +15,8 @@ export default {
         home:'http://bookshop1/user6/bookShop/client/api/',
         class: 'http://192.168.0.15/~user6/bookShop/client/api/'
       },
-      location: 'home'
+      location: 'home', 
+      books: []
     }
   },
   methods: {
@@ -23,10 +24,11 @@ export default {
       var self = this
           axios.get(self.requestUrl + 'books/')
             .then(function (response) {
-            console.log(response.data);
+            console.log(response.data)
+            self.books = response.data
         })
         .catch(function (error) {
-          console.log(error);
+          console.log(error)
         });
     },
   },
