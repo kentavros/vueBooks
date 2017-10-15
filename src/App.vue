@@ -17,7 +17,7 @@ export default {
     }
   },
   computed: {
-    getUrl(){
+    getUrl: function(){
       var self = this
       if(self.location == 'home'){
         return self.url.home
