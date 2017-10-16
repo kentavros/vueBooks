@@ -15,7 +15,7 @@
     <div class="row">
       <div class="sidebar col-md-3">
         <p>
-          <button v-on:click="setFilterValues('', '')" class="btn btn-warning btn-block" type="button" >To Main</button>
+          <button v-on:click="setFilterValues('', '')" class="btn btn-warning btn-block" type="button" >All Books</button>
         </p>
         <p>
         <button class="btn btn-primary btn-block" type="button" data-toggle="collapse" data-target="#booksList" aria-expanded="false" aria-controls="collapseExample">
@@ -78,7 +78,15 @@
                   </div>
                   <div v-if="checkUser == 1" class="toCart">
                     <button v-on:click="setFilterValues('', '')" type="submit" class="btn btn-warning">Back</button>
-                    <button v-on:click="1" type="submit" class="btn btn-primary">Add to cart</button>
+                    <button v-on:click="addToCart(book.id)" type="submit" class="btn btn-primary">Add to cart</button>
+                    <button v-on:click="getCount('+')" type="submit" class="btnP">+</button>
+                    <input class="inputCount" type="text" v-model="count" />
+                    <button v-on:click="getCount('-')" type="submit" class="btnM">-</button>
+                    <div v-if="added != ''" class="imgCart">
+                      <router-link to="/cart">
+                      <img src="static/img/cart.png" alt="" />
+                      </router-link>
+                    </div>
                   </div>
                 </div>
                 <div class="col-md-7">
@@ -91,6 +99,7 @@
                   <p class="author"><span>Authors: </span></p>
                   <p v-for="author in book.authors" class="author">{{author.name}}/ </p>
                   <p class="price"><span>Price: </span>{{book.price}}$</p>
+                  <p v-if="success == 'success'" class="alert-info">The book(s) is in the cart</p>
                 </div>
               </div>
             </div>
@@ -108,6 +117,8 @@ export default {
   name: 'Main',
   data () {
     return {
+      count: 1,
+      // bookAdd: [],
       books: [],
       authors: [],
       genres: [],
@@ -120,11 +131,62 @@ export default {
       genreF: [],
       user: {},
       errorMsg: '',
+
       checkUser: '',
       role: '',
+      added: '',
+      config: {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+            }
+      },
+      success: ''
     }
   },
   methods: {
+    addToCart: function(id)
+    {
+      var self = this
+      self.added = 1
+      var data = new FormData()
+      data.append('id_book', id)
+      data.append('id_client', self.user.id)
+      data.append('count', self.count)
+      axios.post(self.$parent.getUrl + 'cart/', data, self.config)
+      .then(function (response) {
+      console.log(response.data);
+      if (response.data === 1)
+      {
+          self.success = 'success'
+      }
+      else
+      {
+          self.errorMsg = response.data
+      }
+      })
+      .catch(function (error) {
+      console.log(error);
+      });
+    },
+    getCount: function(sym){
+      var self =this
+        if (sym == '+')
+        {
+            self.count = +self.count + 1
+            return self.count
+        }
+        else if (sym == '-')
+        {
+          self.count -= 1
+          if (self.count < 1)
+          {
+            return self.count = 1
+          }
+          else {
+            return self.count
+          }
+        }
+    },
     getBooks: function(){
       var self = this
           axios.get(self.$parent.getUrl + 'books/')
@@ -228,6 +290,9 @@ export default {
       else if (self.filter.name == 'book')
       {
         // console.log(self.books)
+        self.count = 1
+        self.added = ''
+        self.success= ''
         self.bookF = []
         self.authorF = []
         self.genreF = []
@@ -355,5 +420,24 @@ export default {
 .toCart{
   position: relative;
   top: 95px;
+}
+.inputCount{
+  width: 20px;
+}
+.btnP{
+  padding: 0;
+}
+.btnM{
+  padding: 0;
+  padding-left: 2px;
+  padding-right: 2px;
+}
+.imgCart{
+  width: 30px;
+  display: inline-block;
+  margin-left: 20px;
+}
+.imgCart img{
+  width: 100%;
 }
 </style>

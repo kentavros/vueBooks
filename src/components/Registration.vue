@@ -113,13 +113,12 @@ export default {
                   self.errorMsg = 'Password fields do not match'
                   return false
               }
-
               var data = new FormData()
               data.append('first_name', self.firstName)
               data.append('last_name', self.lastName)
               data.append('login', self.login)
               data.append('pass', self.pass)
-                axios.post(self.$parent.getUrl + 'clients/', data, this.config)
+                axios.post(self.$parent.getUrl + 'clients/', data, self.config)
                     .then(function (response) {
                     console.log(response.data);
                     if (response.data === 1)

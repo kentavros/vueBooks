@@ -9,12 +9,14 @@
         </div>
         <button v-on:click="loginFun()" type="submit" class="btn btn-primary">Sign In</button>
         <router-link class="regist" to="/registration">Registration</router-link>
-        <span class="alert-danger">{{errorMsg}}</span>
+        <p><span class="alert-danger">{{errorMsg}}</span></p>
     </div>
     
     <div v-else class="form-group">
       <p class="hello">Hello, <span>{{user.firstName}}</span>!</p>
       <p class="myOrders"><router-link class="reg" to="/orders"><button type="submit" class="btn btn-primary">My Orders</button></router-link></p>
+      <p class="myCart"><router-link class="cart" to="/cart"><button type="submit" class="btn btn-primary">My Cart</button></router-link></p>
+
       <p class="logout"><button v-on:click="logoutFun()" type="submit" class="btn btn-primary">Logout</button></p>
     </div>
   </div>
@@ -148,6 +150,11 @@ export default {
   font-weight: bold;
   font-size: 18px;
   color: darkblue;
+}
+.myCart {
+  position: absolute;
+  top: 42px;
+  left: 115px;
 }
 
 </style>
