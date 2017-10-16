@@ -1,14 +1,14 @@
 <template>
   <div class="main">
-      <p class="alert-danger">{{errMsg}}</p>
+      <p class="alert-danger">{{errorMsg}}</p>
       
     <div class="row">
       <div class="col-md-3">
-        //todo:: Login form
+        <loginForm></loginForm>
       </div>
       <div class="myHader col-md-9">
         <img src="static/img/book_head.jpg" style="width: 100%" />
-        <span>Welcome to the book shope</span>
+        <span>Welcome to the book shop</span>
       </div>
     </div>
       
@@ -54,11 +54,12 @@
         </div>
           <div v-else>
             <div v-if="bookF.length == 0" v-for="book in filteredBooks" class="oneBook col-md-4">
-              <!-- <p v-if="book.length == 0" class="alert-warning">Nothing found</p> -->
+              <a href="#" v-on:click="setFilterValues('book', book.id)">
               <p class="title">{{book.title}}</p>
               <div class="image">
                 <img :src="book.img" class="img"  />
               </div>
+              </a>
               <p class="price"><span>Price: </span>{{book.price}}$</p>
               <p v-if="book.discount > 0" class="discount"><span>Discount: </span>{{book.discount}}%</p>
               <p class="genre"><span>Genres: </span></p>
@@ -74,6 +75,10 @@
                   <p class="detailTitle">{{book.title}}</p>
                   <div class="image">
                     <img :src="book.img" class="img"  />
+                  </div>
+                  <div v-if="checkUser == 1" class="toCart">
+                    <button v-on:click="setFilterValues('', '')" type="submit" class="btn btn-warning">Back</button>
+                    <button v-on:click="1" type="submit" class="btn btn-primary">Add to cart</button>
                   </div>
                 </div>
                 <div class="col-md-7">
@@ -98,6 +103,7 @@
 
 <script>
 import axios from 'axios'
+import Login from './Login'
 export default {
   name: 'Main',
   data () {
@@ -112,7 +118,10 @@ export default {
       bookF: [],
       authorF: [],
       genreF: [],
-      errMsg: ''
+      user: {},
+      errorMsg: '',
+      checkUser: '',
+      role: '',
     }
   },
   methods: {
@@ -126,7 +135,7 @@ export default {
               self.books = response.data
             }
             else{
-              self.errMsg = response.data
+              self.errorMsg = response.data
             }
         })
         .catch(function (error) {
@@ -143,7 +152,7 @@ export default {
               self.authors = response.data
             }
             else{
-              self.errMsg = response.data
+              self.errorMsg = response.data
             }
         })
         .catch(function (error) {
@@ -160,7 +169,7 @@ export default {
               self.genres = response.data
             }
             else{
-              self.errMsg = response.data
+              self.errorMsg = response.data
             }
         })
         .catch(function (error) {
@@ -172,6 +181,40 @@ export default {
       self.filter.name = name
       self.filter.id = id
       // console.log(self.filter)
+    },
+    checkUserFun: function(){
+      var self = this
+      if (localStorage['user'])
+      {
+        self.user = JSON.parse(localStorage['user'])
+        axios.get(self.$parent.getUrl + 'clients/' + self.user.id)
+            .then(function (response) {
+              if (Array.isArray(response.data)){
+                if (self.user.hash === response.data[0].hash)
+                {
+                    self.checkUser = 1;
+                    self.role = response.data[0].role
+                    return true
+                }
+                else
+                {
+                  delete localStorage['user']
+                  self.checkUser = ''
+                }
+              }
+              else {
+                delete localStorage['user']
+                self.errorMsg = response.data
+              }
+            })
+            .catch(function (error) {
+              console.log(error)
+            });
+      }
+      else{
+        self.checkUser = ''
+        return false
+      }
     }
   },
   computed: {
@@ -230,6 +273,10 @@ export default {
     this.getBooks()
     this.getAuthors()
     this.getGenres()
+    this.checkUserFun()
+  },
+  components: {
+    'loginForm': Login
   }
 }
 </script>
@@ -296,12 +343,17 @@ export default {
   height: 150px;
 }
 .myHader span{
-  position:absolute;
-  font-size: 55px;
+  background-color: rgba(255, 255, 255, 0.5);
+  position: absolute;
+  font-size: 58px;
   top: 20px;
   font-weight: 600;
   color: #4499e2;
-  margin-left: 8px;
-  margin-top: 5px;
+  margin-left: 3px;
+  margin-top: 10px;
+}
+.toCart{
+  position: relative;
+  top: 95px;
 }
 </style>
