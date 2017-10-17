@@ -137,12 +137,21 @@ export default {
           else{
               self.errorMsg =  'Enter data in all fields!'
           }
+      },
+      checkUser: function(){
+          var self = this
+          if (localStorage['user']){
+              self.$router.push('/')
+          }
       }
   },
   computed: {
     fullName(){
       return this.firstName + ' ' + this.lastName
     }
+  },
+  created(){
+      this.checkUser()
   }
 }
 </script>

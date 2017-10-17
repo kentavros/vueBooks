@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-      <p class="alert-danger">{{errorMsg}}</p>
+      
       
     <div class="row">
       <div class="col-md-3">
@@ -49,6 +49,7 @@
 
       </div>
       <div class="col-md-9">
+        <p class="alert-danger">{{errorMsg}}</p>
         <div v-if="filteredBooks.length == 0" class="myWarning alert-warning">
           Nothing found
         </div>
@@ -118,7 +119,6 @@ export default {
   data () {
     return {
       count: 1,
-      // bookAdd: [],
       books: [],
       authors: [],
       genres: [],
@@ -147,17 +147,17 @@ export default {
     addToCart: function(id)
     {
       var self = this
-      self.added = 1
       var data = new FormData()
       data.append('id_book', id)
       data.append('id_client', self.user.id)
       data.append('count', self.count)
       axios.post(self.$parent.getUrl + 'cart/', data, self.config)
       .then(function (response) {
-      console.log(response.data);
+      // console.log(response.data);
       if (response.data === 1)
       {
           self.success = 'success'
+          self.added = 1
       }
       else
       {
