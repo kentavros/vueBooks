@@ -169,7 +169,7 @@ export default {
   top: 30px;
   color: darkblue;
   width: 550px;
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: rgba(255, 255, 255, 0.7);
   padding-bottom: 10px;
 }
 .title{

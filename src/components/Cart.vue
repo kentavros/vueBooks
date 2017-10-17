@@ -36,7 +36,7 @@
         <div class="row">
           <div class="col-md-6">
             <router-link to='/'><button class="btn btn-warning">Back</button></router-link>
-            <button v-on:click="getTotalPrice()" class="btn btn-info">Update</button>
+            <button v-on:click="cartUpdate()" class="btn btn-info">Update</button>
             <button v-on:click="2" class="btn btn-success">To Checkout</button>
           </div>
           <div class="col-md-6">
@@ -65,11 +65,14 @@ export default {
   data () {
     return {
       errorMsg: '',
-      // total: 0.00,
       clientDiscount: '',
-      // totalDiscount: '',
       books: [],
-      user: {}
+      user: {},
+      config: {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+            }
+      }
     }
   },
   methods: {
@@ -148,6 +151,19 @@ export default {
       self.books[index].sum = (+self.books[index].price - discount) * +self.books[index].count
       // self.getTotalPrice()
       return self.books[index].sum.toFixed(2)
+    },
+    cartUpdate: function(){
+      var self = this
+      var books = self.books.slice()
+      // var idClient = self.user.id
+      books.unshift({'id_client' : self.user.id})
+        axios.put(self.$parent.getUrl + 'cart/', books, self.config)
+          .then(function (response) {
+            console.log(response.data)
+          })
+          .catch(function (error) {
+            console.log(error)
+          }); 
     }
 
   },
@@ -197,7 +213,7 @@ export default {
   top: 30px;
   color: darkblue;
   width: 700px;
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.8);
   padding-bottom: 10px;
 }
 .total{
@@ -216,7 +232,7 @@ export default {
   text-align: center;
 }
 .inputCount{
-  width: 20px;
+  width: 25px;
 }
 .btnP{
   padding: 0;
