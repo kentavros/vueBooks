@@ -1,9 +1,8 @@
 <template>
   <div class="cart">
-      <div class="cartForm">
+      <div v-if="checkout == ''" class="cartForm">
         <legend class="title"><h2>Client Cart</h2></legend>          
         <p class="alert-danger">{{errorMsg}}</p>
-          <p v-if="books.length == 0" class="alert-danger">The cart is empty - go to the site and make your choice</p>
         <table class="table table-hover ">
           <thead>
             <tr class="info">
@@ -37,7 +36,7 @@
           <div class="col-md-6">
             <router-link to='/'><button class="btn btn-warning">Back</button></router-link>
             <button v-on:click="cartUpdate()" class="btn btn-info">Update</button>
-            <button v-on:click="2" class="btn btn-success">To Checkout</button>
+            <button v-on:click="toCheckout()" class="btn btn-success">To Checkout</button>
           </div>
           <div class="col-md-6">
             <div class="total">
@@ -50,12 +49,30 @@
               Total price: {{getTotalPrice}}$
             </div>
           </div>
-
         </div>
-        
+      </div>
+      <div v-else-if="checkout == 1" class="cartForm">
+        <legend class="title"><h2>Select a Payment Method</h2></legend>          
+        <p class="alert-danger">{{errorMsg}}</p>
+        <ul class="payment">
+          <li v-for="payment in payments">
+            <input type="radio" :value="payment.id" v-model="picked">
+            <label>{{payment.name}}</label>
+          </li>
+        </ul>
+      <button v-on:click="checkout=''" class="btn btn-warning">Back</button>
+      <button v-on:click="Checkout()" class="btn btn-success">Checkout</button>
+      </div>
+      <div v-else-if="checkout == 2" class="cartForm">
+        <legend class="title"><h2>Thank you, {{user.firstName}}!</h2></legend>
+          <p class="info2">
+            The collective of our shop is grateful to you for the trust you have placed!
+            We will deliver the books you selected quickly and carefully!
+          </p>
+          <br>
+          <router-link class="link" to='/'>Go to Main page</router-link>
       </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -65,9 +82,14 @@ export default {
   data () {
     return {
       errorMsg: '',
+      msg: '',
+      checkout: '',
       clientDiscount: '',
+      order: '',
       books: [],
       user: {},
+      payments: [],
+      picked: '',
       config: {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -76,6 +98,22 @@ export default {
     }
   },
   methods: {
+    getPayments: function(){
+      var self = this
+      axios.get(self.$parent.getUrl + 'payment/')
+        .then(function (response) {
+          if (Array.isArray(response.data))
+          {
+            self.payments = response.data
+          }
+          else{
+            self.errorMsg = response.data
+          }
+        })
+        .catch(function (error) {
+          console.log(error)
+        });
+    },
     getCount: function(sym, index){
       var self =this
         if (sym == '+')
@@ -104,7 +142,8 @@ export default {
             // console.log(self.books)
           }
           else{
-            self.errorMsg = response.data
+            self.errorMsg = 'The cart is empty - go to the site and make your choice'
+            self.books = []
           }
         })
         .catch(function (error) {
@@ -154,18 +193,115 @@ export default {
     },
     cartUpdate: function(){
       var self = this
-      var books = self.books.slice()
-      // var idClient = self.user.id
-      books.unshift({'id_client' : self.user.id})
-        axios.put(self.$parent.getUrl + 'cart/', books, self.config)
-          .then(function (response) {
-            console.log(response.data)
-          })
-          .catch(function (error) {
-            console.log(error)
-          }); 
-    }
+      if (self.books.length == 0)
+      {
+        self.errorMsg  = "The CART is EMPTY!"
+        return false
+      }
+      else{
+        var books = self.books.slice()
+        books.unshift({'id_client' : self.user.id})
+          axios.put(self.$parent.getUrl + 'cart/', books, self.config)
+            .then(function (response) {
+              if (response.data == 'update')
+              {
+                self.getBooks()
+                return true
+              }
+            })
+            .catch(function (error) {
+              console.log(error)
+            });
+      }
 
+    },
+    toCheckout: function(){
+      var self = this
+      self.cartUpdate()
+      if (self.books.length == 0)
+      {
+        self.errorMsg  = "The CART is EMPTY!"
+        return false
+      }
+      else
+      {
+        self.checkout = 1
+        self.getPayments()
+      }
+
+    },
+    Checkout: function(){
+      var self = this
+      if (self.books.length == 0)
+      {
+          // self.$router.push('/admin')
+        self.errorMsg  = "The CART is EMPTY!"
+        return false
+      }
+      self.errorMsg = ''
+      if (!self.picked){
+        return self.errorMsg = "Select a Payment Method!"
+      }
+      //add books to table orders
+      var data = new FormData()
+      data.append('id_client', self.user.id)
+      data.append('discount_client', self.clientDiscount)
+      data.append('id_payment', self.picked)
+      data.append('total_discount', self.totalDiscount)
+      data.append('total_price', self.getTotalPrice)
+      axios.post(self.$parent.getUrl + 'orders/', data, self.config)
+      .then(function (response) {
+        // console.log(response.data)
+        if (response.data.id_order)
+        {
+          self.order = response.data.id_order
+          self.addToFullOrder(self.order)
+          self.cleanCart()
+        }
+        else{
+          self.errorMsg = response.data
+        }
+      })
+      .catch(function (error) {
+      console.log(error)
+      })
+      
+      self.checkout = 2
+    },
+    addToFullOrder: function(order){
+      var self = this
+      // add books to table orders_full_info
+      self.books.forEach(function(book){
+        var data = new FormData()
+        data.append('id_order', order)
+        data.append('id_book', book.id)
+        data.append('title_book', book.title)
+        data.append('count', book.count)
+        data.append('price', book.price)
+        data.append('discount_book', book.discount)
+        axios.post(self.$parent.getUrl + 'ordersfullinfo/', data, self.config)
+        .then(function (response) {
+          if (response.data !== 1)
+          {
+              self.errorMsg = response.data
+          }
+        })
+        .catch(function (error) {
+        console.log(error)
+        })
+      })
+    },
+    cleanCart: function()
+    {
+      var self = this
+      axios.delete(self.$parent.getUrl + 'cart/' + self.user.id, self.config)
+          .then(function (response) {
+          console.log(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    }
   },
   created(){
     this.getUser()
@@ -227,6 +363,11 @@ export default {
   text-align: center;
   font-size: 17px;
 }
+.info2{
+  text-align: center;
+  font-size: 17px;
+  width: 500px;
+}
 .tbBook{
   font-size: 17px;
   text-align: center;
@@ -241,5 +382,14 @@ export default {
   padding: 0;
   padding-left: 2px;
   padding-right: 2px;
+}
+.payment{
+  list-style-type: none;
+  padding: 0;
+  width: 120px;
+  text-align: left;
+}
+.link{
+  font-size: 20px;
 }
 </style>

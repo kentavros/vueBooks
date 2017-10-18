@@ -166,7 +166,7 @@ export default {
       })
       .catch(function (error) {
       console.log(error);
-      });
+      })
     },
     getCount: function(sym){
       var self =this
