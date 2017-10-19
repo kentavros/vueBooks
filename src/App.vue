@@ -13,7 +13,7 @@ export default {
         home:'http://bookshop1/user6/bookShop/client/api/',
         class: 'http://192.168.0.15/~user6/bookShop/client/api/'
       },
-      location: 'class'
+      location: 'home'
     }
   },
   computed: {

@@ -14,7 +14,8 @@
     
     <div v-else class="form-group">
       <p class="hello">Hello, <span>{{user.firstName}}</span>!</p>
-      <p class="myOrders"><router-link class="reg" to="/orders"><button type="submit" class="btn btn-primary">My Orders</button></router-link></p>
+      <p class="myOrders"><button v-on:click="myOrders()" type="submit" class="btn btn-primary">My Orders</button></p>
+      <!-- <p class="myOrders"><router-link class="reg" to="/orders"><button type="submit" class="btn btn-primary">My Orders</button></router-link></p> -->
       <p class="myCart"><router-link class="cart" to="/cart"><button type="submit" class="btn btn-primary">My Cart</button></router-link></p>
 
       <p class="logout"><button v-on:click="logoutFun()" type="submit" class="btn btn-primary">Logout</button></p>
@@ -123,6 +124,10 @@ export default {
       self.checkUser = ''
       self.pass = ''
       self.$parent.checkUserFun()
+    },
+    myOrders: function(){
+      var self = this
+      self.$parent.setMyOrder()
     }
   },
   created(){

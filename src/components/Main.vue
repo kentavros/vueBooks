@@ -1,7 +1,6 @@
 <template>
   <div class="main">
-      
-      
+  
     <div class="row">
       <div class="col-md-3">
         <loginForm></loginForm>
@@ -48,8 +47,9 @@
         </div>
 
       </div>
-      <div class="col-md-9">
+      <div v-if="myOrder == ''" class="col-md-9">
         <p class="alert-danger">{{errorMsg}}</p>
+        
         <div v-if="filteredBooks.length == 0" class="myWarning alert-warning">
           Nothing found
         </div>
@@ -107,6 +107,65 @@
           </div>
         </div>
       </div>
+      <!--My Orders section if myOrder != '' -->
+      <div v-else class="col-md-9">
+        <p class="title2">{{user.firstName}} Orders:</p>
+        <div class="sortBtn">
+        <button class="btn-xs btn-primary" type="button" v-on:click="sort('up')">&#8743;</button>
+        <button class="btn-xs btn-primary" type="button" v-on:click="sort('down')">&#8744;</button>
+        </div>
+
+        <table class="table table-hover">
+          <thead>
+          <tr class="info">
+            <th class="thTable">Number Order</th>
+            <th class="thTable">Your discount</th>
+            <th class="thTable">Total discount</th>
+            <th class="thTable">Total Price</th>
+            <th class="thTable">Payment</th>
+            <th class="thTable">Status</th>
+            <th class="thTable">Date</th>
+          </tr>
+          </thead>
+          <tbody v-for="order in orders">
+            <tr class="collapsed trOrders" data-toggle="collapse" :href="'#' + order.id_order" aria-expanded="false" :aria-controls="order.id_order">
+              <td>{{order.id_order}}</td>
+              <td>{{order.discount_client}}</td>
+              <td>{{order.total_discount}}$</td>
+              <td>{{order.total_price}}$</td>
+              <td>{{order.pay_name}}</td>
+              <td>{{order.status}}</td>
+              <td>{{order.date_time}}</td>
+            </tr>
+            <tr class="collapse" :id="order.id_order"  role="tabpanel" :aria-labelledby="order.id_order">
+              <td colspan="7">
+                  <table class="table table-hover table-condensed">
+                    <thead>
+                      <tr class="success">
+                        <th class="thTable">#Order</th>
+                        <th class="thTable">Book ID</th>
+                        <th class="thTable">Title</th>
+                        <th class="thTable">Count</th>
+                        <th class="thTable">Price</th>
+                        <th class="thTable">Discount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="book in order.books">
+                      <td>{{order.id_order}}</td>
+                      <td>{{book.id_book}}</td>
+                      <td>{{book.title_book}}</td>
+                      <td>{{book.count}}</td>
+                      <td>{{book.price}}</td>
+                      <td>{{book.discount_book}}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </template>
@@ -140,10 +199,21 @@ export default {
             'Content-Type': 'application/x-www-form-urlencoded'
             }
       },
-      success: ''
+      success: '',
+      myOrder: '',
+      orders: []
     }
   },
   methods: {
+    sort: function(str){
+      var self = this
+      self.orders.sort(function(a,b){
+        if (str != 'up'){
+          return a.id_order - b.id_order
+        }
+        return b.id_order - a.id_order
+      })
+    },
     addToCart: function(id)
     {
       var self = this
@@ -202,7 +272,7 @@ export default {
         })
         .catch(function (error) {
           console.log(error)
-        });
+        })
     },
     getAuthors: function(){
       var self = this
@@ -240,6 +310,7 @@ export default {
     },
     setFilterValues: function(name, id){
       var self = this
+      self.myOrder = ''
       self.filter.name = name
       self.filter.id = id
       // console.log(self.filter)
@@ -277,6 +348,24 @@ export default {
         self.checkUser = ''
         return false
       }
+    },
+    setMyOrder: function(){
+      var self = this
+      self.myOrder = 1
+      axios.get(self.$parent.getUrl + 'orders/id_client/' + self.user.id)
+          .then(function (response) {
+          // console.log(response.data)
+          if (Array.isArray(response.data))
+          {
+            self.orders = response.data
+          }
+          else{
+            self.errorMsg = response.data
+          }
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
     }
   },
   computed: {
@@ -368,6 +457,12 @@ export default {
   font-weight: bold;
   color: darkblue;
 }
+.title2{
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: darkblue;
+}
 .image{
  height: 260px;
 }
@@ -439,5 +534,18 @@ export default {
 }
 .imgCart img{
   width: 100%;
+}
+.table{
+  text-align: center;
+}
+.trOrders{
+  cursor: pointer;
+}
+.thTable{
+  text-align: center;
+}
+.sortBtn{
+  float: right;
+  margin-bottom: 7px;
 }
 </style>
