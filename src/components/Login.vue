@@ -19,6 +19,8 @@
       <p class="myCart"><router-link class="cart" to="/cart"><button type="submit" class="btn btn-primary">My Cart</button></router-link></p>
 
       <p class="logout"><button v-on:click="logoutFun()" type="submit" class="btn btn-primary">Logout</button></p>
+
+      <p v-if="role == 'admin'" class="admin"><router-link to="/admin"><button type="submit" class="btn btn-danger">Admin</button></router-link></p>
     </div>
   </div>
 </template>
@@ -124,6 +126,7 @@ export default {
       self.checkUser = ''
       self.pass = ''
       self.$parent.checkUserFun()
+      self.$parent.setFilterValues('', '')
     },
     myOrders: function(){
       var self = this
@@ -159,6 +162,11 @@ export default {
 .myCart {
   position: absolute;
   top: 42px;
+  left: 115px;
+}
+.admin{
+  position: absolute;
+  top: 84px;
   left: 115px;
 }
 

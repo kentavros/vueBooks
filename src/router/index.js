@@ -4,7 +4,8 @@ import Router from 'vue-router'
 import Main from '@/components/Main'
 import Registration from '@/components/Registration'
 import Cart from '@/components/Cart'
-// import UserOrders from '@/components/UserOrders'
+import Admin from '@/components/Admin'
+
 
 Vue.use(Router)
 
@@ -25,6 +26,11 @@ export default new Router({
       path: '/cart',
       name: 'cartForm',
       component: Cart
+    },
+    {
+      path: '/admin',
+      name: 'adminForm',
+      component: Admin
     }
   ]
 })

@@ -114,7 +114,7 @@
         <button class="btn-xs btn-primary" type="button" v-on:click="sort('up')">&#8743;</button>
         <button class="btn-xs btn-primary" type="button" v-on:click="sort('down')">&#8744;</button>
         </div>
-
+      <div v-if="orders.length != 0">  
         <table class="table table-hover">
           <thead>
           <tr class="info">
@@ -156,8 +156,8 @@
                       <td>{{book.id_book}}</td>
                       <td>{{book.title_book}}</td>
                       <td>{{book.count}}</td>
-                      <td>{{book.price}}</td>
-                      <td>{{book.discount_book}}</td>
+                      <td>{{book.price}}$</td>
+                      <td>{{book.discount_book}}$</td>
                     </tr>
                     </tbody>
                   </table>
@@ -165,6 +165,10 @@
             </tr>
           </tbody>
         </table>
+        </div>
+        <div v-else class="alert alert-danger">
+          Orders not found!
+        </div>
       </div>
     </div>
   </div>
@@ -190,7 +194,6 @@ export default {
       genreF: [],
       user: {},
       errorMsg: '',
-
       checkUser: '',
       role: '',
       added: '',
@@ -311,6 +314,7 @@ export default {
     setFilterValues: function(name, id){
       var self = this
       self.myOrder = ''
+      self.errorMsg=''
       self.filter.name = name
       self.filter.id = id
       // console.log(self.filter)
