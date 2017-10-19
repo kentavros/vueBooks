@@ -1,6 +1,7 @@
 <template>
   <div class="adminArea">
     <h1>Admin Area, Hello {{user.firstName}}!</h1>
+    
 
     <div class="row">
       <div class="titleA leftPanel col-md-3">
@@ -10,9 +11,11 @@
           <router-link to=''><button class="title btn btn-primary">New Author</button></router-link>
         <p>Edit Or Delete Author</p>
         <div class="form-group">
-        <select class="form-control">
+        <select class="form-control" v-model="selAuthor">
           <optgroup label="Authors">
-            <option>Choose one of the following...</option>
+            <option value="">Choose one of the following...</option>
+            <option v-for="author in authors" :value="author.id" >{{author.name}}</option>
+
           </optgroup>
         </select>
         </div>
@@ -22,9 +25,10 @@
           <router-link to=''><button class="title btn btn-primary">New Genre</button></router-link>
         <p>Edit Or Delete Genre</p>
         <div class="form-group">
-        <select class="form-control">
+        <select class="form-control" v-model="selGenre">
           <optgroup label="Genres">
-            <option>Choose one of the following...</option>
+            <option value="">Choose one of the following...</option>
+            <option v-for="genre in genres" :value="genre.id">{{genre.name}}</option>
           </optgroup>
         </select>
         </div>
@@ -60,8 +64,13 @@
         <p class="nav"><router-link to='/'><button class="btn btn-default">To Main</button></router-link></p>
       </div>
       <div class="col-md-9">
-        
+        <AuthorAdd v-show="selAuthor != ''" :selAuthor="selAuthor"></AuthorAdd>
+        <router-view></router-view>
         4884
+        <br>
+        {{selAuthor}}
+        <br>
+        {{selGenre}}
       </div>
     </div>
   </div>
@@ -69,13 +78,19 @@
 
 <script>
 import axios from 'axios'
+import AuthorAdd from './AuthorAdd'
 export default {
   name: 'adminForm',
   data () {
     return {
       msg: 'Hello Admin',
+      errorMsg: '',
       user: {},
       role: '',
+      authors: [],
+      genres: [],
+      selAuthor: '',
+      selGenre: '',
     }
   },
   methods: {
@@ -113,10 +128,58 @@ export default {
         else{
           self.$router.push('/')
         }
+    },
+    getAuthors: function(){
+      var self = this 
+      axios.get(self.$parent.getUrl + 'authors/')
+          .then(function (response) {
+          // console.log(response.data)
+          if (Array.isArray(response.data))
+          {
+            self.authors = response.data
+          }
+          else{
+            self.errorMsg = response.data
+          }
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+    },
+    getGenres: function(){
+      var self = this 
+      axios.get(self.$parent.getUrl + 'genres/')
+          .then(function (response) {
+          // console.log(response.data)
+          if (Array.isArray(response.data))
+          {
+            self.genres = response.data
+          }
+          else{
+            self.errorMsg = response.data
+          }
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+    },
+    getBooks: function(){
+      var self = this
+      
+    },
+    getData: function(){
+      var self = this
+      self.getAuthors()
+      self.getGenres()
+      self.getBooks()
     }
   },
   created(){
     this.checkUserFun()
+    this.getData()
+  },
+  components: {
+    'AuthorAdd' : AuthorAdd
   }
 }
 </script>
