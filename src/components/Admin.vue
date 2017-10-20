@@ -14,9 +14,11 @@
           <optgroup label="Authors">
             <option value="">Choose one of the following...</option>
             <option v-for="author in authors" :value="author.id" >{{author.name}}</option>
-
           </optgroup>
         </select>
+          <div v-if="newAuthor || selAuthor" class="btnClear">
+              <button class="btn-danger btn-xs" type="button" v-on:click="clear('author')" title="Clear author ssection">X</button>
+          </div>
         </div>
         </div>
 <!-- GENRE -->
@@ -65,20 +67,10 @@
       </div>
       <div class="col-md-9">
         <h3 class="alert-danger" style="text-align:center">{{errorMsg}}</h3>
-        <!-- <div v-show="content.newAuthor != ''">
-          <AuthorEditAdd :newAuthor="content.newAuthor"></AuthorEditAdd>
-        </div>
-         <AuthorEditAdd v-show="selAuthor != ''" :selAuthor="selAuthor"></AuthorEditAdd> -->
-        <!--<div v-show="content.selAuthor != ''">
-          <AuthorEditAdd :selAuthor="content.selAuthor"></AuthorEditAdd>
-        </div> -->
-        {{newAuthor}}
-        <div v-if="newAuthor || selAuthor">
-            <button v-on:click="clear()">Clear</button>
-        </div>
-        
-        <br>
-        {{selAuthor}}
+<!--AUTHOR VIEW SECTION-->
+        <AuthorEditAdd :selAuthor="selAuthor" :newAuthor="newAuthor"></AuthorEditAdd>
+<!--GENRE VIEW SECTION--> 
+
         <br>
         {{selGenre}}
         <br>
@@ -95,7 +87,6 @@ export default {
   name: 'adminForm',
   data () {
     return {
-      msg: 'Hello Admin',
       errorMsg: '',
       user: {},
       role: '',
@@ -105,18 +96,17 @@ export default {
       newAuthor: '',
       selAuthor: '',
       selGenre: '',
-      selBooks:'',
-      content:{
-        new: '',
-        sel: ''
-      },
+      selBooks:''
     }
   },
   methods: {
-    clear: function(){
+    clear: function(str){
       var self = this
-      self.newAuthor = ''
-      self.selAuthor= ''
+      if (str == 'author')
+      {
+        self.newAuthor = ''
+        self.selAuthor= ''
+      }
     },
     checkUserFun: function(){
         var self = this
@@ -246,5 +236,9 @@ export default {
 .nav{
   margin-bottom: 30px;
   text-align: left;
+}
+.btnClear{
+  margin-top: 10px;
+  float: right;
 }
 </style>

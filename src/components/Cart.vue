@@ -294,13 +294,13 @@ export default {
     cleanCart: function()
     {
       var self = this
-      axios.delete(self.$parent.getUrl + 'cart/' + self.user.id, self.config)
+      axios.delete(getUrl() + 'cart/' + self.user.id, axConf)
           .then(function (response) {
-          console.log(response.data);
+          // console.log(response.data)
       })
       .catch(function (error) {
         console.log(error);
-      });
+      })
     }
   },
   created(){

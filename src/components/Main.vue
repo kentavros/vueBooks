@@ -287,7 +287,7 @@ export default {
         })
         .catch(function (error) {
           console.log(error)
-        });
+        })
     },
     getGenres: function(){
       var self = this

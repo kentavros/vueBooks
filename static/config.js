@@ -7,5 +7,5 @@ var axConf = {
 }
 
 function getUrl() {
-    return homeU
+    return classU
 }
