@@ -78,11 +78,11 @@ export default {
       login: '',
       pass: '',
       passConf: '',
-      config: {
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-            }
-      },
+    //   config: {
+    //     headers: {
+    //         'Content-Type': 'application/x-www-form-urlencoded'
+    //         }
+    //   },
       success: '',
       errorMsg: ''
     }
@@ -118,7 +118,7 @@ export default {
               data.append('last_name', self.lastName)
               data.append('login', self.login)
               data.append('pass', self.pass)
-                axios.post(self.$parent.getUrl + 'clients/', data, self.config)
+                axios.post(getUrl() + 'clients/', data, axConf)
                     .then(function (response) {
                     console.log(response.data);
                     if (response.data === 1)

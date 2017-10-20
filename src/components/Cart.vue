@@ -90,17 +90,17 @@ export default {
       user: {},
       payments: [],
       picked: '',
-      config: {
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-            }
-      }
+      // config: {
+      //   headers: {
+      //       'Content-Type': 'application/x-www-form-urlencoded'
+      //       }
+      // }
     }
   },
   methods: {
     getPayments: function(){
       var self = this
-      axios.get(self.$parent.getUrl + 'payment/')
+      axios.get(getUrl() + 'payment/')
         .then(function (response) {
           if (Array.isArray(response.data))
           {
@@ -131,7 +131,7 @@ export default {
     },
     getBooks: function(){
       var self = this
-      axios.get(self.$parent.getUrl + 'cart/' + self.user.id)
+      axios.get(getUrl() + 'cart/' + self.user.id)
         .then(function (response) {
           if (Array.isArray(response.data))
           {
@@ -152,7 +152,7 @@ export default {
     },
     getClientDiscount: function(){
       var self = this
-      axios.get(self.$parent.getUrl + 'clients/' + self.user.id)
+      axios.get(getUrl() + 'clients/' + self.user.id)
       .then(function (response) {
         if (Array.isArray(response.data)){
           if (self.user.hash === response.data[0].hash)
@@ -201,7 +201,7 @@ export default {
       else{
         var books = self.books.slice()
         books.unshift({'id_client' : self.user.id})
-          axios.put(self.$parent.getUrl + 'cart/', books, self.config)
+          axios.put(getUrl() + 'cart/', books, axConf)
             .then(function (response) {
               if (response.data == 'update')
               {
@@ -249,7 +249,7 @@ export default {
       data.append('id_payment', self.picked)
       data.append('total_discount', self.totalDiscount)
       data.append('total_price', self.getTotalPrice)
-      axios.post(self.$parent.getUrl + 'orders/', data, self.config)
+      axios.post(getUrl() + 'orders/', data, axConf)
       .then(function (response) {
         // console.log(response.data)
         if (response.data.id_order)
@@ -279,7 +279,7 @@ export default {
         data.append('count', book.count)
         data.append('price', book.price)
         data.append('discount_book', book.discount)
-        axios.post(self.$parent.getUrl + 'ordersfullinfo/', data, self.config)
+        axios.post(getUrl() + 'ordersfullinfo/', data, axConf)
         .then(function (response) {
           if (response.data !== 1)
           {

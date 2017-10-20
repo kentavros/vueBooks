@@ -41,11 +41,11 @@ export default {
         firstName: '',
       },
       role: '',
-      config: {
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-            }
-      },
+      // config: {
+      //   headers: {
+      //       'Content-Type': 'application/x-www-form-urlencoded'
+      //       }
+      // },
     }
   }, 
   methods: {
@@ -54,10 +54,10 @@ export default {
       self.errorMsg = ''
         if (self.login && self.pass)
         {
-          axios.put(self.$parent.$parent.getUrl + 'clients/', {
+          axios.put(getUrl() + 'clients/', {
             login: self.login,
             pass: self.pass
-          }, self.config)
+          }, axConf)
           .then(function (response) {
             if (response.data.id && response.data.hash)
             {
@@ -80,7 +80,7 @@ export default {
           })
           .catch(function (error) {
             console.log(error)
-          });
+          })
         }
         else
         {
@@ -92,7 +92,7 @@ export default {
       if (localStorage['user'])
       {
         self.user = JSON.parse(localStorage['user'])
-        axios.get(self.$parent.$parent.getUrl + 'clients/' + self.user.id)
+        axios.get(getUrl() + 'clients/' + self.user.id)
             .then(function (response) {
               if (Array.isArray(response.data)){
                 if (self.user.hash === response.data[0].hash)

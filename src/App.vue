@@ -9,24 +9,24 @@ export default {
   name: 'app',
   data(){
     return {
-      url: {
-        home:'http://bookshop1/user6/bookShop/client/api/',
-        class: 'http://192.168.0.15/~user6/bookShop/client/api/'
-      },
-      location: 'class'
+      // url: {
+      //   home:'http://bookshop1/user6/bookShop/client/api/',
+      //   class: 'http://192.168.0.15/~user6/bookShop/client/api/'
+      // },
+      // location: 'home'
     }
   },
   computed: {
-    getUrl: function(){
-      var self = this
-      if(self.location == 'home'){
-        return self.url.home
-      }
-      else
-      {
-        return self.url.class
-      }
-    }
+    // getUrl: function(){
+    //   var self = this
+    //   if(self.location == 'home'){
+    //     return self.url.home
+    //   }
+    //   else
+    //   {
+    //     return self.url.class
+    //   }
+    // }
   }
 }
 </script>

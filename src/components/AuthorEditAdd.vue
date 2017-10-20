@@ -1,15 +1,20 @@
 <template>
   <div class="authorAdd">
-    
-    <br>
-    <p class="alert alert-danger">{{selAuthor}}</p>
+    <div v-if="newAuthor">
+      sdfgsdgdsgdsgsdgsdgsdg
+    </div>
+
+    <div v-if="selAuthor">
+      <br>
+      <p class="alert alert-danger">{{selAuthor}}</p>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: 'authorForm',
-  props: ['selAuthor'],
+  props: ['newAuthor', 'selAuthor'],
   data () {
     return {
      

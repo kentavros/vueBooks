@@ -197,11 +197,6 @@ export default {
       checkUser: '',
       role: '',
       added: '',
-      config: {
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-            }
-      },
       success: '',
       myOrder: '',
       orders: []
@@ -224,7 +219,7 @@ export default {
       data.append('id_book', id)
       data.append('id_client', self.user.id)
       data.append('count', self.count)
-      axios.post(self.$parent.getUrl + 'cart/', data, self.config)
+      axios.post(getUrl() + 'cart/', data, axConf)
       .then(function (response) {
       // console.log(response.data);
       if (response.data === 1)
@@ -262,7 +257,7 @@ export default {
     },
     getBooks: function(){
       var self = this
-          axios.get(self.$parent.getUrl + 'books/')
+          axios.get(getUrl() + 'books/')
             .then(function (response) {
             // console.log(response.data)
             if (Array.isArray(response.data))
@@ -279,7 +274,7 @@ export default {
     },
     getAuthors: function(){
       var self = this
-      axios.get(self.$parent.getUrl + 'authors/')
+      axios.get(getUrl() + 'authors/')
             .then(function (response) {
             // console.log(response.data)
             if (Array.isArray(response.data))
@@ -296,7 +291,7 @@ export default {
     },
     getGenres: function(){
       var self = this
-      axios.get(self.$parent.getUrl + 'genres/')
+      axios.get(getUrl() + 'genres/')
             .then(function (response) {
             // console.log(response.data)
             if (Array.isArray(response.data))
@@ -324,7 +319,7 @@ export default {
       if (localStorage['user'])
       {
         self.user = JSON.parse(localStorage['user'])
-        axios.get(self.$parent.getUrl + 'clients/' + self.user.id)
+        axios.get(getUrl() + 'clients/' + self.user.id)
             .then(function (response) {
               if (Array.isArray(response.data)){
                 if (self.user.hash === response.data[0].hash)
@@ -356,7 +351,7 @@ export default {
     setMyOrder: function(){
       var self = this
       self.myOrder = 1
-      axios.get(self.$parent.getUrl + 'orders/id_client/' + self.user.id)
+      axios.get(getUrl() + 'orders/id_client/' + self.user.id)
           .then(function (response) {
           // console.log(response.data)
           if (Array.isArray(response.data))
