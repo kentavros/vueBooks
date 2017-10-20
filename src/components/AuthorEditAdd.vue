@@ -7,8 +7,8 @@
         <input type="text" class="form-control" v-model="author">
         <button v-on:click="addAuthor()" class="btn btn-success" type="button">Submit</button>
       </div>
-      <span v-show="msg != ''" class="alert-success" >{{msg}}</span>
-      <span v-show="errorMsg != ''" class="alert-danger">{{errorMsg}}</span>
+      <span v-show="msgInp != ''" class="alert-success" >{{msgInp}}</span>
+      <span v-show="errorMsgInp != ''" class="alert-danger">{{errorMsgInp}}</span>
     </div>
 
     <div v-if="selAuthor" class="selected">
@@ -18,12 +18,10 @@
         <button  class="btn btn-success" type="button" v-on:click="edit(selAuthor)">Edit</button>
         <button  class="btn btn-danger" type="button" v-on:click="deleteFun(selAuthor)">Delete</button>
       </div>
-      <span v-show="msg != ''" class="alert-success" >{{msg}}</span>
-      <span v-show="errorMsg != ''" class="alert-danger">{{errorMsg}}</span>
+      <span v-show="msgSel != ''" class="alert-success" >{{msgSel}}</span>
+      <span v-show="errorMsgSel != ''" class="alert-danger">{{errorMsgSel}}</span>
     </div>
-    {{editAuthor}}
     <hr>
-    {{selAuthor}}
   </div>
 </template>
 
@@ -34,13 +32,13 @@ export default {
   props: ['newAuthor', 'selAuthor'],
   data () {
     return {
-      errorMsg: '',
-      msg: '',
+      errorMsgInp: '',
+      errorMsgSel: '',
+      msgInp: '',
+      msgSel: '',
       user: {},
       author: '',
       editAuthor: '',
-      idAuthor: '',
-      nameAuthor: '',
     }
   },
   methods: {
@@ -57,11 +55,12 @@ export default {
         // console.log(response.data)
         if (response.data === 1)
         {
-          self.msg = 'Author successfully added'
+          self.msgInp = 'Author "' + self.author + '" successfully added'
           self.$parent.getAuthors()
+          self.author = ''
         }
         else{
-          self.errorMsg = response.data
+          self.errorMsgInp = response.data
         }
       })
       .catch(function (error) {
@@ -83,9 +82,19 @@ export default {
     deleteFun: function(id){
       var self = this
       axios.delete(getUrl() + 'authors/hash/' + self.user.hash + '/id_client/' 
-      + self.user.id + '/' + self.selAuthor + '/', axConf)
+      + self.user.id + '/id/' + self.selAuthor, axConf)
       .then(function (response) {
       console.log(response.data)
+      if (response.data === 1)
+      {
+        self.msgSel = 'Author "' + self.editAuthor + '" has deleted!'
+        self.$parent.getAuthors()
+        self.editAuthor = ''
+      }
+      else{
+          self.errorMsgSel = response.data
+        }
+     
       })
       .catch(function (error) {
         console.log(error);
@@ -107,7 +116,7 @@ export default {
               return self.editAuthor              
             }
             else{
-              self.errorMsg = response.data
+              self.errorMsgInp = response.data
             }
         })
         .catch(function (error) {

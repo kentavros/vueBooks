@@ -23,7 +23,7 @@
         </div>
 <!-- GENRE -->
         <div class="col-md-12">
-          <router-link to=''><button v-on:click="2" class="title btn btn-primary">New Genre</button></router-link>
+          <router-link to=''><button v-on:click="newGenre=1" class="title btn btn-primary">New Genre</button></router-link>
         <p>Edit Or Delete Genre</p>
         <div class="form-group">
         <select class="form-control" v-model="selGenre">
@@ -32,6 +32,9 @@
             <option v-for="genre in genres" :value="genre.id">{{genre.name}}</option>
           </optgroup>
         </select>
+          <div v-if="newGenre || selGenre" class="btnClear">
+            <button class="btn-danger btn-xs" type="button" v-on:click="clear('genre')" title="Clear author ssection">X</button>
+          </div>
         </div>
         </div>
 <!--BOOKS-->
@@ -70,7 +73,8 @@
 <!--AUTHOR VIEW SECTION-->
         <AuthorEditAdd :selAuthor="selAuthor" :newAuthor="newAuthor"></AuthorEditAdd>
 <!--GENRE VIEW SECTION--> 
-
+        <GenreEditAdd :selGenre="selGenre" :newGenre="newGenre"></GenreEditAdd>
+        {{newGenre}}
         <br>
         {{selGenre}}
         <br>
@@ -83,6 +87,7 @@
 <script>
 import axios from 'axios'
 import AuthorEditAdd from './AuthorEditAdd'
+import GenreEditAdd from './GenreEditAdd'
 export default {
   name: 'adminForm',
   data () {
@@ -94,9 +99,10 @@ export default {
       genres: [],
       books: [],
       newAuthor: '',
+      newGenre: '',
       selAuthor: '',
       selGenre: '',
-      selBooks:''
+      selBooks:'',
     }
   },
   methods: {
@@ -106,6 +112,12 @@ export default {
       {
         self.newAuthor = ''
         self.selAuthor= ''
+        return true
+      }
+      else if (str == 'genre')
+      {
+        self.newGenre = ''
+        self.selGenre = ''
       }
     },
     checkUserFun: function(){
@@ -206,7 +218,8 @@ export default {
     this.getData()
   },
   components: {
-    'AuthorEditAdd' : AuthorEditAdd
+    'AuthorEditAdd' : AuthorEditAdd,
+    'GenreEditAdd' : GenreEditAdd
   }
 }
 </script>
