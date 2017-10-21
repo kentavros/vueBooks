@@ -90,7 +90,7 @@
         </fieldset>
     
     <div v-if="success === 'success'" class="success">
-      <h4 class="alert alert-info">Client <strong>"{{fullName}}"</strong> Registered!</h4>
+      <h4 class="alert alert-info">Client <strong>"{{fullName}}"</strong> edit!</h4>
       <router-link class="link" to='/admin/regist/'><button v-on:click="success=''" class="btn btn-primary">Register more</button> </router-link>
     </div>
     </div>
@@ -116,6 +116,7 @@ export default {
       editClient: function () {
           var self = this
           self.errorMsg = ''
+          self.msg = ''
           if (self.client[0].first_name && self.client[0].last_name)
           {
               if (self.client[0].first_name.length <= 2)
@@ -131,12 +132,13 @@ export default {
 
               var data = {}
               data.hash = self.user.hash
-              data.id_user = self.user.id
-            //   data.append('first_name', self.client[0].first_name)
-            //   data.append('last_name', self.client[0].last_name)
-            //   data.append('discount', self.client[0].discount)
-            //   data.append('role', self.client[0].role)
-            //   data.append('active', self.client[0].active)
+              data.id_client = self.user.id //Admin id
+              data.id = self.client[0].id
+              data.first_name = self.client[0].first_name
+              data.last_name = self.client[0].last_name
+              data.discount = self.client[0].discount
+              data.role = self.client[0].role
+              data.active = self.client[0].active
                 if (self.pass != '')
                 {
                     if (self.pass.length <= 3)
@@ -151,20 +153,22 @@ export default {
                     }
                     else
                     {
-                        // data.append('pass', self.pass)
+                        data.pass = self.pass
                     }
                 }
                 axios.put(getUrl() + 'clients/', data, axConf)
                     .then(function (response) {
                     console.log(response.data);
-                    // if (response.data === 1)
-                    // {
-                    //     self.success = 'success'
-                    // }
-                    // else
-                    // {
-                    //     self.errorMsg = response.data
-                    // }
+                    if (response.data === 1)
+                    {
+                        self.success = 'success'
+                        self.$parent.getUsers()
+                    }
+                    else
+                    {
+                        self.errorMsg = response.data
+                        self.$parent.getUsers()
+                    }
                 })
                     .catch(function (error) {
                     console.log(error);
@@ -187,6 +191,8 @@ export default {
   computed: {
     selected(){
         var self = this
+        self.pass = ''
+        self.passConf = ''
         var selUser = self.selUser
         if (selUser != '')
         {
@@ -207,10 +213,9 @@ export default {
                 console.log(error)
             })
         }
-
     },
     fullName(){
-    return this.firstName + ' ' + this.lastName
+    return this.client[0].first_name + ' ' + this.client[0].last_name
     }
   },
   created(){
