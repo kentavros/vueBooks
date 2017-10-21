@@ -2,7 +2,7 @@
     <div class="registration">
     <div class="regForm">
       <p class="alert-danger">{{errorMsg}}</p>
-      <div v-if="success !== 'success'">
+      
         <fieldset>
             <div id="legend">
             <legend class="title">Client Registration</legend>
@@ -54,14 +54,14 @@
             <!-- Button -->
             <div class="controls">
                 <button v-on:click="registration()" class="btn btn-success">Register</button>
-                <router-link to='/'><button class="btn btn-info">Back</button></router-link>
+                <router-link to='/admin'><button v-on:click="$parent.newUser=''" class="btn btn-info">Back</button></router-link>
             </div>
             </div>
         </fieldset>
-    </div>
-    <div v-else class="success">
-      <h2>Thank you <strong>{{fullName}}</strong>, press link and login to sait</h2>
-      <router-link class="link" to='/'> to Main page </router-link>
+    
+    <div v-if="success === 'success'" class="success">
+      <h4 class="alert alert-info">Client <strong>"{{fullName}}"</strong> Registered!</h4>
+      <router-link class="link" to='/admin/regist/'><button v-on:click="success=''" class="btn btn-primary">Register more</button> </router-link>
     </div>
     </div>
   </div>
@@ -70,7 +70,7 @@
 <script>
 import axios from 'axios'
 export default {
-  name: 'registrationForm',
+  name: 'AdminRegistrationForm',
   data () {
     return {
       firstName: '',
@@ -133,12 +133,7 @@ export default {
               self.errorMsg =  'Enter data in all fields!'
           }
       },
-      checkUser: function(){
-          var self = this
-          if (localStorage['user']){
-              self.$router.push('/')
-          }
-      }
+
   },
   computed: {
     fullName(){
@@ -146,7 +141,7 @@ export default {
     }
   },
   created(){
-      this.checkUser()
+
   }
 }
 </script>
@@ -154,14 +149,12 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .registration{
-  background-image: url(/static/img/books.jpg);
-  height: 665px;
-  text-align: -webkit-center;
-  
+    text-align: center; 
 }
 .regForm{
-  position: relative;
-  top: 30px;
+  /* position: relative;
+  top: 30px; */
+  margin: auto;
   color: darkblue;
   width: 550px;
   background-color: rgba(255, 255, 255, 0.7);
@@ -177,15 +170,15 @@ export default {
     color: darkblue;
     text-align: center;
 }
-.success h2{
-  padding-top: 15px;
+.success h4{
+  /* padding-top: 5px; */
 }
 .alert-danger{
     text-align: center
 }
 
 .link{
-    font-size: 30px;
+    font-size: 15px;
     font-weight: bold;
 }
 </style>

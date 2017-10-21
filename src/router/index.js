@@ -5,6 +5,8 @@ import Main from '@/components/Main'
 import Registration from '@/components/Registration'
 import Cart from '@/components/Cart'
 import Admin from '@/components/Admin'
+import AdminRegist from '@/components/AdminRegist'
+import AdminUserEditDel from '@/components/AdminUserEditDel'
 
 
 Vue.use(Router)
@@ -30,7 +32,13 @@ export default new Router({
     {
       path: '/admin',
       name: 'adminForm',
-      component: Admin
+      component: Admin,
+      children: [
+        {
+          path: 'regist',
+          component: AdminRegist
+        },
+      ]
     }
   ]
 })

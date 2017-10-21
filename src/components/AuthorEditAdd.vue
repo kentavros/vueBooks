@@ -77,14 +77,36 @@ export default {
       }
     },
     edit: function(id){
-      alert('edit ' + id)
+      var self = this
+       axios.put(getUrl() + 'authors/', 
+       {
+         hash: self.user.hash,
+         id_client: self.user.id,
+         id: id,
+         name: self.editAuthor
+       }, axConf)
+            .then(function (response) {
+              // console.log(response.data)
+              if (response.data === 1)
+              {
+                self.msgSel = 'Edit author to "' + self.editAuthor + '".'
+                self.$parent.getAuthors()
+                self.editAuthor = ''
+              }
+              else {
+                  self.errorMsgSel = response.data
+              }
+            })
+            .catch(function (error) {
+              console.log(error)
+            })
     },
     deleteFun: function(id){
       var self = this
       axios.delete(getUrl() + 'authors/hash/' + self.user.hash + '/id_client/' 
       + self.user.id + '/id/' + self.selAuthor, axConf)
       .then(function (response) {
-      console.log(response.data)
+      // console.log(response.data)
       if (response.data === 1)
       {
         self.msgSel = 'Author "' + self.editAuthor + '" has deleted!'

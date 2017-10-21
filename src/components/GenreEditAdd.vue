@@ -42,6 +42,31 @@ export default {
     }
   },
   methods:{
+      addGenre: function(){
+      var self = this
+      self.msg = ''
+      self.errorMsg = ''
+      var data = new FormData()
+      data.append('hash', self.user.hash)
+      data.append('id_client', self.user.id)
+      data.append('genre', self.genre)
+      axios.post(getUrl() + 'genres/', data, axConf)
+      .then(function (response) {
+        // console.log(response.data)
+        if (response.data === 1)
+        {
+          self.msgInp = 'Genre "' + self.genre + '" successfully added'
+          self.$parent.getGenres()
+          self.genre = ''
+        }
+        else{
+          self.errorMsgInp = response.data
+        }
+      })
+      .catch(function (error) {
+      console.log(error)
+      })
+    },
     getUser: function(){
       var self = this
       if (localStorage['user']){
@@ -51,6 +76,52 @@ export default {
         self.$router.push('/')
       }
     },
+    edit: function(id){
+      var self = this
+       axios.put(getUrl() + 'genres/', 
+       {
+         hash: self.user.hash,
+         id_client: self.user.id,
+         id: id,
+         name: self.editGenre
+       }, axConf)
+            .then(function (response) {
+              // console.log(response.data)
+              if (response.data === 1)
+              {
+                self.msgSel = 'Edit genres to "' + self.editGenre + '".'
+                self.$parent.getGenres()
+                self.editGenre = ''
+              }
+              else {
+                  self.errorMsgSel = response.data
+              }
+            })
+            .catch(function (error) {
+              console.log(error)
+            })
+    },
+    deleteFun: function(id){
+      var self = this
+      axios.delete(getUrl() + 'genres/hash/' + self.user.hash + '/id_client/' 
+      + self.user.id + '/id/' + self.selGenre, axConf)
+      .then(function (response) {
+      // console.log(response.data)
+      if (response.data === 1)
+      {
+        self.msgSel = 'Genre "' + self.editGenre + '" has deleted!'
+        self.$parent.getGenres()
+        self.editGenre = ''
+      }
+      else{
+          self.errorMsgSel = response.data
+        }
+     
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+    }
   },
   computed: {
     selected(){

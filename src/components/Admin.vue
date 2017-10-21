@@ -5,9 +5,10 @@
     <div class="row">
       <div class="titleA leftPanel col-md-3">
         <p class="nav"><router-link to='/'><button class="btn btn-default">To Main</button></router-link></p>
+        <hr>
 <!--AUTHORS-->        
         <div class="col-md-12">
-          <router-link to=''><button v-on:click="newAuthor=1" class="title btn btn-primary">New Author</button></router-link>
+          <button v-on:click="newAuthor=1" class="title btn btn-primary" type="button">New Author</button>
         <p>Edit Or Delete Author</p>
         <div class="form-group">
         <select class="form-control" v-model="selAuthor">
@@ -23,7 +24,7 @@
         </div>
 <!-- GENRE -->
         <div class="col-md-12">
-          <router-link to=''><button v-on:click="newGenre=1" class="title btn btn-primary">New Genre</button></router-link>
+          <button v-on:click="newGenre=1" class="title btn btn-primary" type="button">New Genre</button>
         <p>Edit Or Delete Genre</p>
         <div class="form-group">
         <select class="form-control" v-model="selGenre">
@@ -39,7 +40,7 @@
         </div>
 <!--BOOKS-->
         <div class="col-md-12">
-          <router-link to=''><button class="title btn btn-warning">New Book</button></router-link>
+          <router-link to=''><button class="title btn btn-warning" >New Book</button></router-link>
         <p>Edit Or Delete Book</p>
         <div class="form-group">
         <select class="form-control" v-model="selBooks">
@@ -50,23 +51,32 @@
         </select>
         </div>
         </div>
-
+<!--USERS-->
         <div class="col-md-12">
-          <router-link to=''><button class="title btn btn-warning">New User</button></router-link>
+          <router-link to='admin/regist/'><button v-on:click="newUser=1" class="title btn btn-warning">New User</button></router-link>
         <p>Edit User</p>
         <div class="form-group">
-        <select class="form-control">
+        <select class="form-control" v-model="selUser">
           <optgroup label="Users">
-            <option>Choose one of the following...</option>
+            <option value="">Choose one of the following...</option>
+            <option v-for="client in users" :value="client.id">{{client.first_name}}</option>
           </optgroup>
         </select>
+          <div v-if="newUser || selUser" class="btnClear">
+            <router-link to='/admin'>
+              <button class="btn-danger btn-xs" type="button" v-on:click="clear('user')" title="Clear author ssection">X</button>
+            </router-link>
+          </div>
         </div>
         </div>
 
         <div class="col-md-12">
-          <router-link to=''><button class="title btn btn-info">Show all Orders</button></router-link>
+          <router-link to=''><button class="titleOrder btn btn-info">Show all Orders</button></router-link>
         </div>
-        <p class="nav"><router-link to='/'><button class="btn btn-default">To Main</button></router-link></p>
+        <div class="navFoo">
+             <p ><router-link to='/'><button class="btn btn-default">To Main</button></router-link></p>
+        </div>
+       
       </div>
       <div class="col-md-9">
         <h3 class="alert-danger" style="text-align:center">{{errorMsg}}</h3>
@@ -74,11 +84,9 @@
         <AuthorEditAdd :selAuthor="selAuthor" :newAuthor="newAuthor"></AuthorEditAdd>
 <!--GENRE VIEW SECTION--> 
         <GenreEditAdd :selGenre="selGenre" :newGenre="newGenre"></GenreEditAdd>
-        {{newGenre}}
-        <br>
-        {{selGenre}}
-        <br>
-        {{selBooks}}
+<!--USERS-->
+        <router-view></router-view>
+        <AdminUserEditDel :selUser="selUser"></AdminUserEditDel>
       </div>
     </div>
   </div>
@@ -88,6 +96,8 @@
 import axios from 'axios'
 import AuthorEditAdd from './AuthorEditAdd'
 import GenreEditAdd from './GenreEditAdd'
+import AdminRegist from './AdminRegist'
+import AdminUserEditDel from './AdminUserEditDel'
 export default {
   name: 'adminForm',
   data () {
@@ -98,11 +108,15 @@ export default {
       authors: [],
       genres: [],
       books: [],
+      users: [],
       newAuthor: '',
       newGenre: '',
+      newBook: '',
+      newUser: '',
       selAuthor: '',
       selGenre: '',
       selBooks:'',
+      selUser: ''
     }
   },
   methods: {
@@ -118,6 +132,11 @@ export default {
       {
         self.newGenre = ''
         self.selGenre = ''
+      }
+      else if (str == 'user')
+      {
+        self.newUser = ''
+        self.selUser = ''
       }
     },
     checkUserFun: function(){
@@ -206,11 +225,30 @@ export default {
         console.log(error)
       })
     },
+    getUsers: function()
+    {
+      var self = this
+      axios.get(getUrl() + 'clients/hash/' + self.user.hash + '/id_client/' + self.user.id)
+          .then(function (response) {
+          // console.log(response.data)
+          if (Array.isArray(response.data))
+          {
+            self.users = response.data
+          }
+          else{
+            self.errorMsg = response.data
+          }
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+    },
     getData: function(){
       var self = this
       self.getAuthors()
       self.getGenres()
       self.getBooks()
+      self.getUsers()
     }
   },
   created(){
@@ -219,7 +257,8 @@ export default {
   },
   components: {
     'AuthorEditAdd' : AuthorEditAdd,
-    'GenreEditAdd' : GenreEditAdd
+    'GenreEditAdd' : GenreEditAdd,
+    'AdminUserEditDel' : AdminUserEditDel
   }
 }
 </script>
@@ -244,14 +283,20 @@ export default {
   font-size: 18px;
 }
 .titleA .col-md-12{
+  margin-bottom: 10px;
+}
+.titleOrder{
   margin-bottom: 30px;
 }
 .nav{
-  margin-bottom: 30px;
+  margin-bottom: 10px;
   text-align: left;
 }
 .btnClear{
   margin-top: 10px;
   float: right;
+}
+.navFoo{
+  text-align: left;
 }
 </style>
