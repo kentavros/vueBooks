@@ -41,7 +41,7 @@
 <!--BOOKS-->
         <div class="col-md-12">
           <router-link to='/admin/newbook'><button v-on:click="newBook=1" class="title btn btn-warning" >New Book</button></router-link>
-        <p>Edit Or Delete Book</p>
+        <p>Edit Book</p>
         <div class="form-group">
         <select class="form-control" v-model="selBook">
           <optgroup label="Books">
@@ -93,6 +93,8 @@
         <router-view></router-view>
 <!--EDIT USER SECTION-->
         <AdminUserEditDel :selUser="selUser"></AdminUserEditDel>
+<!--EDIT BOOK SECTION-->
+        <AdminEditBook :selBook="selBook"></AdminEditBook>
       </div>
     </div>
   </div>
@@ -105,6 +107,7 @@ import GenreEditAdd from './GenreEditAdd'
 import AdminRegist from './AdminRegist'
 import AdminUserEditDel from './AdminUserEditDel'
 import NewBook from './NewBook'
+import AdminEditBook from './AdminEditBook'
 export default {
   name: 'adminForm',
   data () {
@@ -270,7 +273,8 @@ export default {
   components: {
     'AuthorEditAdd' : AuthorEditAdd,
     'GenreEditAdd' : GenreEditAdd,
-    'AdminUserEditDel' : AdminUserEditDel
+    'AdminUserEditDel' : AdminUserEditDel,
+    'AdminEditBook' : AdminEditBook
   }
 }
 </script>
