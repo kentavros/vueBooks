@@ -170,8 +170,8 @@ export default {
                     }
                 })
                     .catch(function (error) {
-                    console.log(error);
-                });
+                    console.log(error)
+                })
           }
           else{
               self.errorMsg =  'Enter data in all fields!'

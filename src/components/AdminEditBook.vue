@@ -10,7 +10,7 @@
             <!-- Title -->
               <label class="control-label"  for="title">Book Title</label>
               <div class="controls">
-                  <input v-model="title" type="text" id="title" name="title" placeholder="" class="input-xlarge">
+                  <input v-model="book.title" type="text" id="title" name="title" placeholder="" class="input-xlarge">
                   <p class="help-block">Input title book</p>
               </div>
             </div> 
@@ -18,7 +18,7 @@
             <!-- Price -->
               <label class="control-label"  for="price">Book Price</label>
               <div class="controls">
-                  <input v-model="price" type="text" id="price" name="price" class="input-xlarge" placeholder="0.00">
+                  <input v-model="book.price" type="text" id="price" name="price" class="input-xlarge" placeholder="0.00">
                   <p class="help-block">Enter the price of the book - should be float or integer</p>
               </div>
             </div>
@@ -26,7 +26,7 @@
             <!-- Description -->
               <label class="control-label"  for="description">Book Description</label>
               <div class="controls">
-                <textarea v-model="description" type="text" id="description" name="description" class="input-xlarge"></textarea>
+                <textarea v-model="book.description" type="text" id="description" name="description" class="input-xlarge"></textarea>
                   <p class="help-block">Enter the full description of the book</p>
               </div>
             </div>
@@ -34,7 +34,7 @@
             <!-- Discount -->
               <label class="control-label"  for="discount">Book Discount</label>
               <div class="controls">
-                  <input v-model="discount" type="text" id="discount" name="discount" class="input-xlarge" placeholder="">
+                  <input v-model="book.discount" type="text" id="discount" name="discount" class="input-xlarge" placeholder="">
                   <p class="help-block">Specify a discount for the book - should be float or integer</p>
               </div>
             </div>
@@ -42,7 +42,7 @@
             <!-- Active -->
               <label class="control-label"  for="active">Book Status: Active / Deactive </label>
               <div class="controls">
-                  <select v-model="active">
+                  <select v-model="book.active">
                       <option value="yes">Active</option>
                       <option class="alert-danger" value="no">Deactive</option>
                   </select>
@@ -53,15 +53,15 @@
             <!-- Image -->
               <label class="control-label"  for="img">Book Title</label>
               <div class="controls">
-                  <input v-model="img" style="width: 209px;" type="text" id="img" name="img" placeholder="" class="input-xlarge">
+                  <input v-model="book.img" style="width: 209px;" type="text" id="img" name="img" placeholder="" class="input-xlarge">
                   <p class="help-block">Input image book. Default: static/img/no_image.jpg</p>
               </div>
             </div> 
             <div class="control-group">
             <!-- Button -->
               <div class="controls">
-                  <button v-on:click="addBook()" class="btn btn-success">Create</button>
-                  <router-link to='/admin'><button v-on:click="$parent.newBook=''" class="btn btn-info">Cancel</button></router-link>
+                  <button v-on:click="editBook()" class="btn btn-success">Edit</button>
+                  <router-link to='/admin'><button v-on:click="$parent.selBook=''" class="btn btn-info">Cancel</button></router-link>
               </div>
             </div>
             <p class="alert-info">{{msg}}</p>
@@ -73,7 +73,7 @@
     <div  class="AuthorGenre">
       <fieldset>
         <div id="legend">
-          <legend class="title">Add Authors and Genres</legend>
+          <legend class="title">Edit Authors and Genres</legend>
         </div>
             <div class="control-group">
             <!-- Author -->
@@ -98,14 +98,15 @@
             <div class="control-group">
             <!-- Button -->
               <div v-if="btn == ''" class="controls">
-                  <button v-on:click="saveBook()" class="btn btn-success">Save</button>
+                  <button v-on:click="editAuthorsGenres()" class="btn btn-success">Edit</button>
                   <router-link to='/admin'><button v-on:click="$parent.newBook=''" class="btn btn-info">Cancel</button></router-link>
-                <p v-if="idBook != ''" class="alert-danger">{{errorMsg}}</p>
+                <p class="alert-danger">{{errorMsg}}</p>
                 
               </div>
               <div v-else class="controls">
-                <router-link to='/admin'><button v-on:click="$parent.newBook=''" class="btn btn-info">Back</button></router-link>
-                <p v-if="idBook != ''" class="alert-info">{{msg}}</p>  
+                <router-link to='/admin'><button v-on:click="$parent.selBook=''" class="btn btn-info">Back</button></router-link>
+                <p class="alert-info">{{msgA}}</p>  
+                <p class="alert-info">{{msgG}}</p>  
               </div>
             </div>
       </fieldset>
@@ -122,26 +123,20 @@ export default {
     return {
       errorMsg: '',
       msg: '',
+      msgA: '',
+      msgG: '',
       books: [],
       user: {},
       book: {},
-
-
-      // idBook: '',
-      // title: '',
-      // price: '',
-      // description: '',
-      // discount: '0.00',
-      // active: 'yes',
-      // img: 'static/img/no_image.jpg',
-      // authors: [],
-      // genres: [],
-      // user: [],
-      // selGenres: [],
-      // selAuthors: [],
-      // btn: '',
-      // strAuthors: '',
-      // strGenres: ''
+      btn: '',
+      authors: [],
+      genres: [],
+      selGenres: [],
+      selAuthors: [],
+      bookToAuthor: [],
+      bookToGenre: [],
+      strAuthors: '',
+      strGenres: ''
     }
   },
   methods: {
@@ -170,185 +165,225 @@ export default {
       .catch(function (error) {
         console.log(error)
       })
-    }
-    // saveBook: function(){
-    //   var self = this
-    //   self.msg = ''
-    //   self.errorMsg = ''
-    //   self.strAuthors = ''
-    //   self.strGenres = ''
-    //   if (self.selGenres.length == 0)
-    //   {
-    //     self.errorMsg = 'Forgot to choose Genre?'
-    //   }
-    //   if (self.selAuthors.length == 0)
-    //   {
-    //     self.errorMsg = 'Forgot to choose Author?'
-    //   }
-    //   self.selAuthors.forEach(function(idAuthor){
-    //     // console.log(idAuthor)
-    //     var data = new FormData()
-    //     data.append('hash', self.user.hash)
-    //     data.append('id_client', self.user.id)
-    //     data.append('id_book', self.idBook)
-    //     data.append('id_author', idAuthor)
-    //     axios.post(getUrl() + 'booktoauthor/', data, axConf)
-    //       .then(function (response) {
-    //         if (response.data !== 1)
-    //         {
-    //             self.errorMsg = response.data
-    //         }
-    //       })
-    //     .catch(function (error) {
-    //     console.log(error)
-    //     })
-    //     self.authors.forEach(function(author){
-    //       if (author.id == idAuthor)
-    //       {
-    //         self.strAuthors += author.name + ' '
-    //       }
-    //     })
-    //   })
-    //   self.selGenres.forEach(function(idGenre){
-    //     // console.log(idGener)
-    //     var data = new FormData()
-    //     data.append('hash', self.user.hash)
-    //     data.append('id_client', self.user.id)
-    //     data.append('id_book', self.idBook)
-    //     data.append('id_genre', idGenre)
-    //     axios.post(getUrl() + 'booktogenre/', data, axConf)
-    //       .then(function (response) {
-    //         if (response.data !== 1)
-    //         {
-    //             self.errorMsg = response.data
-    //         }
-    //       })
-    //     .catch(function (error) {
-    //     console.log(error)
-    //     })
-    //     self.genres.forEach(function(genre){
-    //       if (genre.id == idGenre)
-    //       {
-    //         self.strGenres += genre.name + ' '
-    //       }
-    //     })
-    //   })
-    //   if (self.errorMsg == '')
-    //   {
-    //     self.msg = 'Book, author(s) and gener(s) added to DB!'
-    //     self.$parent.getBooks()
-    //     self.btn = 1
-    //     self.addToHistoryTable()
-    //   }
-    // },
-    // addToHistoryTable: function(){
-    //   var self = this
-    //   var data = new FormData()
-    //   data.append('hash', self.user.hash)
-    //   data.append('id_client', self.user.id)
-    //   data.append('title', self.title)
-    //   data.append('genre', self.strGenres)
-    //   data.append('author', self.strAuthors)
-    //   data.append('price', self.price)
-    //   axios.post(getUrl() + 'historybook/', data, axConf)
-    //       .then(function (response) {
-    //         if (response.data !== 1)
-    //         {
-    //             self.errorMsg = response.data
-    //         }
-    //       })
-    //     .catch(function (error) {
-    //     console.log(error)
-    //     })
-    // },
-    // addBook: function(){
-    //   var self = this
-    //   self.msg = ''
-    //   self.errorMsg = ''
-    //   var data = new FormData()
-    //   data.append('hash', self.user.hash)
-    //   data.append('id_client', self.user.id)
-    //   data.append('title', self.title)
-    //   data.append('price', self.price)
-    //   data.append('description', self.description)
-    //   data.append('discount', self.discount)
-    //   data.append('active', self.active)
-    //   data.append('img', self.img)
-    //   axios.post(getUrl() + 'books/', data, axConf)
-    //         .then(function (response) {
-    //         // console.log(response.data);
-    //     if (response.data.id_book)
-    //     {
-    //       self.idBook = response.data.id_book
-    //       self.msg = 'The book was created - add the author and genre!'
-    //     }
-    //     else
-    //     {
-    //       self.errorMsg = response.data
-    //     }
-    //     })
-    //         .catch(function (error) {
-    //         console.log(error)
-    //     })
-    // },
-    // getUser: function(){
-    //   var self = this
-    //   if (localStorage['user']){
-    //       self.user = JSON.parse(localStorage['user'])
-    //   }
-    //   else {
-    //       self.$router.push('/')
-    //   }
-    // },
-    // getAuthors: function(){
-    //   var self = this 
-    //   axios.get(getUrl() + 'authors/')
-    //       .then(function (response) {
-    //       // console.log(response.data)
-    //       if (Array.isArray(response.data))
-    //       {
-    //         self.authors = response.data
-    //       }
-    //       else{
-    //         self.errorMsg = response.data
-    //       }
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error)
-    //   })
-    // },
-    // getGenres: function(){
-    //   var self = this 
-    //   axios.get(getUrl() + 'genres/')
-    //       .then(function (response) {
-    //       // console.log(response.data)
-    //       if (Array.isArray(response.data))
-    //       {
-    //         self.genres = response.data
-    //       }
-    //       else{
-    //         self.errorMsg = response.data
-    //       }
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error)
-    //   })
-    // },
-    // getData: function(){
-    //   var self = this
-    //   self.getUser()
-    //   self.getAuthors()
-    //   self.getGenres()
-    // } 
+    },
+    editBook: function(){
+      var self = this
+      self.msg = ''
+      self.errorMsg = ''
+      var data = {}
+      data.hash = self.user.hash
+      data.id_client = self.user.id //Admin id
+      data.id = self.book.id
+      data.title = self.book.title
+      data.price = self.book.price
+      data.description = self.book.description
+      data.discount = self.book.discount
+      data.active = self.book.active
+      data.img = self.book.img
+      axios.put(getUrl() + 'books/', data, axConf)
+          .then(function (response) {
+          console.log(response.data);
+          if (response.data === 1)
+          {
+              self.msg = 'Book Edit Success'
+              self.$parent.getBooks()
+          }
+          else
+          {
+              self.errorMsg = response.data
+          }
+      })
+          .catch(function (error) {
+          console.log(error)
+      })
+    },
+    updateAuthors: function(selectAuth){
+      var self = this
+      selectAuth.forEach(function(idAuthor){
+        var data = new FormData()
+        data.append('hash', self.user.hash)
+        data.append('id_client', self.user.id)
+        data.append('id_book', self.book.id)
+        data.append('id_author', idAuthor)
+        axios.post(getUrl() + 'booktoauthor/', data, axConf)
+          .then(function (response) {
+            // console.log(response.data)
+          if (response.data === 1)
+          {
+              self.msgA = 'Author(s) update'
+          }
+          else
+          {
+              self.errorMsg = response.data
+          }
+          })
+        .catch(function (error) {
+        console.log(error)
+        })
+      })
+    },
+    updateGenres: function(selectGenr){
+      var self = this
+      selectGenr.forEach(function(idGenre){
+        // console.log(idGener)
+        var data = new FormData()
+        data.append('hash', self.user.hash)
+        data.append('id_client', self.user.id)
+        data.append('id_book', self.book.id)
+        data.append('id_genre', idGenre)
+        axios.post(getUrl() + 'booktogenre/', data, axConf)
+          .then(function (response) {
+            // console.log(response.data)
+          if (response.data === 1)
+          {
+              self.msgG = 'Genre(s) update'
+          }
+          else
+          {
+              self.errorMsg = response.data
+          }
+          })
+        .catch(function (error) {
+        console.log(error)
+        })
+      })
+    },
+    editAuthorsGenres: function(){
+      var self = this
+      self.errorMsg = ''
+      var selectAuth = self.selAuthors.slice()
+      var selectGenr = self.selGenres.slice()
+      //Authors edit
+      axios.delete(getUrl() + 'booktoauthor/hash/' + self.user.hash + '/id_client/' +
+      self.user.id + '/id/' + self.book.id, axConf)
+          .then(function (response) {
+          self.updateAuthors(selectAuth)
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+      //Genres Edit
+      axios.delete(getUrl() + 'booktogenre/hash/' + self.user.hash + '/id_client/' +
+      self.user.id + '/id/' + self.book.id, axConf)
+          .then(function (response) {
+          self.updateGenres(selectGenr)
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+      if (self.errorMsg == '')
+      {
+        self.btn = 1
+      }
+    },
+    getAuthors: function(){
+      var self = this 
+      axios.get(getUrl() + 'authors/')
+          .then(function (response) {
+          // console.log(response.data)
+          if (Array.isArray(response.data))
+          {
+            self.authors = response.data
+          }
+          else{
+            self.errorMsg = response.data
+          }
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+    },
+    getGenres: function(){
+      var self = this 
+      axios.get(getUrl() + 'genres/')
+          .then(function (response) {
+          // console.log(response.data)
+          if (Array.isArray(response.data))
+          {
+            self.genres = response.data
+          }
+          else{
+            self.errorMsg = response.data
+          }
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+    },
+    getBookToAuthor: function(){
+      var self = this
+      self.selAuthors = []
+      axios.get(getUrl() + 'booktoauthor/id_book/' + self.book.id)
+          .then(function (response) {
+          // console.log(response.data)
+          if (Array.isArray(response.data))
+          {
+            self.bookToAuthor = response.data
+
+            self.bookToAuthor.forEach(function(id){
+              self.selAuthors.push(id.id_author)                
+            })
+            // console.log(self.selAuthors)
+          }
+          else{
+            self.errorMsg = 'There is no author(s) in this book'
+          }
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+    },
+    getBookToGenre: function(){
+      var self = this
+      self.selGenres = []
+      axios.get(getUrl() + 'booktogenre/id_book/' + self.book.id)
+          .then(function (response) {
+          // console.log(response.data)
+          if (Array.isArray(response.data))
+          {
+            self.bookToGenre = response.data
+
+            self.bookToGenre.forEach(function(id){
+              self.selGenres.push(id.id_genre)                
+            })
+            // console.log(self.selGenres)
+          }
+          else{
+            self.errorMsg = 'There is no genre(s) in this book'
+          }
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+    },
+    getData: function(){
+      var self = this
+      self.getUser()
+      self.getBooks()
+      self.getAuthors()
+      self.getGenres()
+    } 
   },
   created(){
-    this.getUser()
-    this.getBooks()
+    this.getData()
   },
   computed: {
     selected(){
       var self = this
-      console.log(self.selBook)
+      self.errorMsg = ''
+      self.msg = ''
+      self.msgA = ''
+      self.msgG = ''
+      self.btn = ''
+      var selBook = self.selBook
+      self.books.forEach(function(book){
+        if (book.id == selBook)
+        {
+          self.book = book
+          self.getBookToAuthor()
+          self.getBookToGenre()
+        }
+      })
     }
   },
 }
