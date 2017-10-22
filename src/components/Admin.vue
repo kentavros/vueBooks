@@ -40,15 +40,20 @@
         </div>
 <!--BOOKS-->
         <div class="col-md-12">
-          <router-link to='/admin/newbook'><button class="title btn btn-warning" >New Book</button></router-link>
+          <router-link to='/admin/newbook'><button v-on:click="newBook=1" class="title btn btn-warning" >New Book</button></router-link>
         <p>Edit Or Delete Book</p>
         <div class="form-group">
-        <select class="form-control" v-model="selBooks">
+        <select class="form-control" v-model="selBook">
           <optgroup label="Books">
             <option value="">Choose one of the following...</option>
             <option v-for="book in books" :value="book.id">{{book.title}}</option>
           </optgroup>
         </select>
+          <div v-if="newBook || selBook" class="btnClear">
+            <router-link to='/admin'>
+              <button class="btn-danger btn-xs" type="button" v-on:click="clear('book')" title="Clear author ssection">X</button>
+            </router-link>
+          </div>
         </div>
         </div>
 <!--USERS-->
@@ -117,7 +122,7 @@ export default {
       newUser: '',
       selAuthor: '',
       selGenre: '',
-      selBooks:'',
+      selBook:'',
       selUser: ''
     }
   },
@@ -139,6 +144,11 @@ export default {
       {
         self.newUser = ''
         self.selUser = ''
+      }
+      else if (str == 'book')
+      {
+        self.newBook = ''
+        self.selBook = ''
       }
     },
     checkUserFun: function(){

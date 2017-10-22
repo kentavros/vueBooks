@@ -10,7 +10,7 @@
             <!-- Title -->
               <label class="control-label"  for="title">Book Title</label>
               <div class="controls">
-                  <input type="text" id="title" name="title" placeholder="" class="input-xlarge">
+                  <input v-model="title" type="text" id="title" name="title" placeholder="" class="input-xlarge">
                   <p class="help-block">Input title book</p>
               </div>
             </div> 
@@ -18,7 +18,7 @@
             <!-- Price -->
               <label class="control-label"  for="price">Book Price</label>
               <div class="controls">
-                  <input type="text" id="price" name="price" class="input-xlarge" placeholder="0.00">
+                  <input v-model="price" type="text" id="price" name="price" class="input-xlarge" placeholder="0.00">
                   <p class="help-block">Enter the price of the book - should be float or integer</p>
               </div>
             </div>
@@ -26,7 +26,7 @@
             <!-- Description -->
               <label class="control-label"  for="description">Book Description</label>
               <div class="controls">
-                <textarea type="text" id="description" name="description" class="input-xlarge"></textarea>
+                <textarea v-model="description" type="text" id="description" name="description" class="input-xlarge"></textarea>
                   <p class="help-block">Enter the full description of the book</p>
               </div>
             </div>
@@ -34,7 +34,7 @@
             <!-- Discount -->
               <label class="control-label"  for="discount">Book Discount</label>
               <div class="controls">
-                  <input type="text" id="discount" name="discount" class="input-xlarge" placeholder="0.00">
+                  <input v-model="discount" type="text" id="discount" name="discount" class="input-xlarge" placeholder="">
                   <p class="help-block">Specify a discount for the book - should be float or integer</p>
               </div>
             </div>
@@ -42,7 +42,7 @@
             <!-- Active -->
               <label class="control-label"  for="active">Book Status: Active / Deactive </label>
               <div class="controls">
-                  <select>
+                  <select v-model="active">
                       <option value="yes">Active</option>
                       <option class="alert-danger" value="no">Deactive</option>
                   </select>
@@ -53,20 +53,23 @@
             <!-- Image -->
               <label class="control-label"  for="img">Book Title</label>
               <div class="controls">
-                  <input style="width: 209px;" type="text" id="img" name="img" placeholder="Default: static/img/no_image.jpg" class="input-xlarge">
-                  <p class="help-block">Input title book</p>
+                  <input v-model="img" style="width: 209px;" type="text" id="img" name="img" placeholder="" class="input-xlarge">
+                  <p class="help-block">Input image book. Default: static/img/no_image.jpg</p>
               </div>
             </div> 
             <div class="control-group">
             <!-- Button -->
               <div class="controls">
-                  <button class="btn btn-success">Create</button>
-                  <router-link to='/admin'><button class="btn btn-info">Cancel</button></router-link>
+                  <button v-on:click="addBook()" class="btn btn-success">Create</button>
+                  <router-link to='/admin'><button v-on:click="$parent.newBook=''" class="btn btn-info">Cancel</button></router-link>
               </div>
             </div>
+            <p class="alert-info">{{msg}}</p>
       </fieldset>
     </div>
     <br>
+
+<!-- AUTHORS && GENRES Sections-->
     <div v-if="idBook" class="AuthorGenre">
       <fieldset>
         <div id="legend">
@@ -96,7 +99,7 @@
             <!-- Button -->
               <div class="controls">
                   <button class="btn btn-success">Save</button>
-                  <router-link to='/admin'><button class="btn btn-info">Cancel</button></router-link>
+                  <router-link to='/admin'><button v-on:click="$parent.newBook=''" class="btn btn-info">Cancel</button></router-link>
               </div>
             </div>
       </fieldset>
@@ -111,15 +114,52 @@ export default {
   data () {
     return {
       errorMsg: '',
+      msg: '',
       idBook: '',
-      user: [],
+      title: '',
+      price: '',
+      description: '',
+      discount: '0.00',
+      active: 'yes',
+      img: 'static/img/no_image.jpg',
       authors: [],
       genres: [],
+      user: [],
       selGenres: [],
       selAuthors: []
     }
   },
   methods: {
+    addBook: function(){
+      var self = this
+      self.msg = ''
+      self.errorMsg = ''
+      var data = new FormData()
+      data.append('hash', self.user.hash)
+      data.append('id_client', self.user.id)
+      data.append('title', self.title)
+      data.append('price', self.price)
+      data.append('description', self.description)
+      data.append('discount', self.discount)
+      data.append('active', self.active)
+      data.append('img', self.img)
+      axios.post(getUrl() + 'books/', data, axConf)
+            .then(function (response) {
+            console.log(response.data);
+        if (response.data.id_book)
+        {
+          self.idBook = response.data.id_book
+          self.msg = 'The book was created - add the author and genre!'
+        }
+        else
+        {
+          self.errorMsg = response.data
+        }
+        })
+            .catch(function (error) {
+            console.log(error)
+        })
+    },
     getUser: function(){
       var self = this
       if (localStorage['user']){

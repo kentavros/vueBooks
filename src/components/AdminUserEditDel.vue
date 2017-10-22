@@ -115,7 +115,7 @@ export default {
       editClient: function () {
           var self = this
           self.errorMsg = ''
-          self.msg = ''
+          self.success = ''
           if (self.client[0].first_name && self.client[0].last_name)
           {
               if (self.client[0].first_name.length <= 2)
@@ -192,6 +192,8 @@ export default {
         var self = this
         self.pass = ''
         self.passConf = ''
+        self.errorMsg = ''
+        self.success = ''
         var selUser = self.selUser
         if (selUser != '')
         {
