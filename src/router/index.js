@@ -6,7 +6,7 @@ import Registration from '@/components/Registration'
 import Cart from '@/components/Cart'
 import Admin from '@/components/Admin'
 import AdminRegist from '@/components/AdminRegist'
-import AdminUserEditDel from '@/components/AdminUserEditDel'
+import NewBook from '@/components/NewBook'
 
 
 Vue.use(Router)
@@ -38,6 +38,10 @@ export default new Router({
           path: 'regist',
           component: AdminRegist
         },
+        {
+          path: 'newbook',
+          component: NewBook
+        }
       ]
     }
   ]

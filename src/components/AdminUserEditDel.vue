@@ -84,14 +84,13 @@
             <!-- Button -->
             <div class="controls">
                 <button v-on:click="editClient()" class="btn btn-success">Edit Client</button>
-                <router-link to='/admin'><button v-on:click="$parent.selUser=''" class="btn btn-info">Back</button></router-link>
+                <router-link to='/admin'><button v-on:click="$parent.selUser=''" class="btn btn-info">Cancel</button></router-link>
             </div>
             </div>
         </fieldset>
     
     <div v-if="success === 'success'" class="success">
-      <h4 class="alert alert-info">Client <strong>"{{fullName}}"</strong> edit!</h4>
-      <router-link class="link" to='/admin/regist/'><button v-on:click="success=''" class="btn btn-primary">Register more</button> </router-link>
+      <h4 class="alert alert-info">Client <strong>"{{fullName}}"</strong> edit success!</h4>
     </div>
     </div>
   </div>

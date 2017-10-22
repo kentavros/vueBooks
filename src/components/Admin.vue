@@ -40,7 +40,7 @@
         </div>
 <!--BOOKS-->
         <div class="col-md-12">
-          <router-link to=''><button class="title btn btn-warning" >New Book</button></router-link>
+          <router-link to='/admin/newbook'><button class="title btn btn-warning" >New Book</button></router-link>
         <p>Edit Or Delete Book</p>
         <div class="form-group">
         <select class="form-control" v-model="selBooks">
@@ -53,7 +53,7 @@
         </div>
 <!--USERS-->
         <div class="col-md-12">
-          <router-link to='admin/regist/'><button v-on:click="newUser=1" class="title btn btn-warning">New User</button></router-link>
+          <router-link to='/admin/regist/'><button v-on:click="newUser=1" class="title btn btn-warning">New User</button></router-link>
         <p>Edit User</p>
         <div class="form-group">
         <select class="form-control" v-model="selUser">
@@ -84,8 +84,9 @@
         <AuthorEditAdd :selAuthor="selAuthor" :newAuthor="newAuthor"></AuthorEditAdd>
 <!--GENRE VIEW SECTION--> 
         <GenreEditAdd :selGenre="selGenre" :newGenre="newGenre"></GenreEditAdd>
-<!--USERS-->
+<!--NEWBOOK--> <!--NEWUSERS-->
         <router-view></router-view>
+<!--EDIT USER SECTION-->
         <AdminUserEditDel :selUser="selUser"></AdminUserEditDel>
       </div>
     </div>
@@ -98,6 +99,7 @@ import AuthorEditAdd from './AuthorEditAdd'
 import GenreEditAdd from './GenreEditAdd'
 import AdminRegist from './AdminRegist'
 import AdminUserEditDel from './AdminUserEditDel'
+import NewBook from './NewBook'
 export default {
   name: 'adminForm',
   data () {
