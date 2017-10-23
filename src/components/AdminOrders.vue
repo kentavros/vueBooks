@@ -1,14 +1,15 @@
 <template>
   <div class="orders">
-    {{orders}}
     <div>
-      <router-link to='/admin'><button class="btn btn-info">Cancel</button></router-link>
+      <router-link to='/admin'><button class="btn btn-info">Back</button></router-link>
     </div>
     <div class="sortBtn">
       <button class="btn-xs btn-primary" title="Up sort" type="button" v-on:click="sort('up')">&#8743;</button>
       <button class="btn-xs btn-primary" title="Down sort" type="button" v-on:click="sort('down')">&#8744;</button>
     </div>
     <div>
+      <p v-if="msg" class="alert-success" style="text-align: center">{{msg}}</p>
+      <p v-if="errorMsg" class="alert-success" style="text-align: center">{{errorMsg}}</p>
       <table class="table table-hover">
         <thead>
           <tr class="info">
@@ -30,7 +31,13 @@
             <td>{{order.total_discount}}$</td>
             <td>{{order.total_price}}$</td>
             <td>{{order.pay_name}}</td>
-            <td>{{order.status}}</td>
+            <td v-if="order.selected == false">{{order.status}}</td>
+            <td v-else>
+              <select v-model="orders[index].status" v-on:change="saveStatus(index)">
+                <option value="processed">Processed</option>   
+                <option value="sent">Sent</option>
+              </select>
+            </td>
             <td>{{order.date_time}}</td>
           </tr>
           <tr v-if="order.selected == true">
@@ -72,6 +79,7 @@ export default {
   name: 'OrdersForm',
   data () {
     return {
+      msg: '',
       errorMsg: '',
       user: {},
       orders: [],
@@ -79,8 +87,33 @@ export default {
     }
   },
   methods:{
+    saveStatus: function(index){
+      var self = this
+      var data = {}
+      data.hash = self.user.hash
+      data.id_client = self.user.id //Admin id
+      data.id_order = self.orders[index].id_order
+      data.status = self.orders[index].status
+      axios.put(getUrl() + 'orders/', data, axConf)
+        .then(function (response) {
+        console.log(response.data);
+        if (response.data === 1)
+        {
+            self.msg = 'Order #' + self.orders[index].id_order +  ' - Status changed!'
+        }
+        else
+        {
+            self.errorMsg = response.data
+        }
+      })
+          .catch(function (error) {
+          console.log(error)
+      })
+    },
     sort: function(str){
       var self = this
+      self.msg = ''
+      self.errorMsg = ''
       self.orders.sort(function(a,b){
         if (str != 'up'){
           return a.id_order - b.id_order
@@ -142,6 +175,8 @@ export default {
   computed:{
     ordersFilter(){
       var self = this
+      self.msg = ''
+      self.errorMsg = ''
       var orders = self.orders
       if (!self.refresh)
       {

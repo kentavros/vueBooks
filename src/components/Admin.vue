@@ -76,7 +76,12 @@
         </div>
 
         <div class="col-md-12">
-          <router-link to='/admin/orders/'><button class="titleOrder btn btn-info">Show all Orders</button></router-link>
+          <router-link to='/admin/orders/'><button v-on:click="selOrders=1" class="titleOrder btn btn-info">Show all Orders</button></router-link>
+          <div v-if="selOrders" class="btnClear">
+            <router-link to='/admin'>
+              <button class="btn-danger btn-xs" type="button" v-on:click="selOrders=''" title="Clear author ssection">X</button>
+            </router-link>
+          </div>
         </div>
         <div class="navFoo">
              <p ><router-link to='/'><button class="btn btn-default">To Main</button></router-link></p>
@@ -127,7 +132,8 @@ export default {
       selAuthor: '',
       selGenre: '',
       selBook:'',
-      selUser: ''
+      selUser: '',
+      selOrders: ''
     }
   },
   methods: {
