@@ -76,7 +76,7 @@
         </div>
 
         <div class="col-md-12">
-          <router-link to=''><button class="titleOrder btn btn-info">Show all Orders</button></router-link>
+          <router-link to='/admin/orders/'><button class="titleOrder btn btn-info">Show all Orders</button></router-link>
         </div>
         <div class="navFoo">
              <p ><router-link to='/'><button class="btn btn-default">To Main</button></router-link></p>
@@ -89,7 +89,7 @@
         <AuthorEditAdd :selAuthor="selAuthor" :newAuthor="newAuthor"></AuthorEditAdd>
 <!--GENRE VIEW SECTION--> 
         <GenreEditAdd :selGenre="selGenre" :newGenre="newGenre"></GenreEditAdd>
-<!--NEWBOOK--> <!--NEWUSERS-->
+<!--NEWBOOK--> <!--NEWUSERS--> <!--ORDERS-->
         <router-view></router-view>
 <!--EDIT USER SECTION-->
         <AdminUserEditDel :selUser="selUser"></AdminUserEditDel>
@@ -108,6 +108,7 @@ import AdminRegist from './AdminRegist'
 import AdminUserEditDel from './AdminUserEditDel'
 import NewBook from './NewBook'
 import AdminEditBook from './AdminEditBook'
+import AdminOrders from './AdminOrders'
 export default {
   name: 'adminForm',
   data () {

@@ -7,6 +7,7 @@ import Cart from '@/components/Cart'
 import Admin from '@/components/Admin'
 import AdminRegist from '@/components/AdminRegist'
 import NewBook from '@/components/NewBook'
+import AdminOrders from '@/components/AdminOrders'
 
 
 Vue.use(Router)
@@ -41,6 +42,10 @@ export default new Router({
         {
           path: 'newbook',
           component: NewBook
+        },
+        {
+          path: 'orders',
+          component: AdminOrders
         }
       ]
     }

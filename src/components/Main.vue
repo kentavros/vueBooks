@@ -110,6 +110,7 @@
       <!--My Orders section if myOrder != '' -->
       <div v-else class="col-md-9">
         <p class="title2">{{user.firstName}} Orders:</p>
+        <p class="title" style="color:red">Personal discount: {{discount}}%</p>
         <div class="sortBtn">
         <button class="btn-xs btn-primary" type="button" v-on:click="sort('up')">&#8743;</button>
         <button class="btn-xs btn-primary" type="button" v-on:click="sort('down')">&#8744;</button>
@@ -199,7 +200,8 @@ export default {
       added: '',
       success: '',
       myOrder: '',
-      orders: []
+      orders: [],
+      discount: ''
     }
   },
   methods: {
@@ -326,6 +328,7 @@ export default {
                 {
                     self.checkUser = 1;
                     self.role = response.data[0].role
+                    self.discount = response.data[0].discount
                     return true
                 }
                 else
